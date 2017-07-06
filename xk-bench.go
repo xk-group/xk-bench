@@ -45,12 +45,15 @@ var die = make(chan bool)
 
 func consume() {
 	timeoutDuration := time.Duration(time.Duration(timeout) * time.Second)
+	client := &http.Client {
+		Timeout: timeoutDuration,
+		Transport: &http.Transport {
+			DisableKeepAlives: true,
+		},
+	}
 	for url := range fifo0 {
-		client := http.Client {
-			Timeout: timeoutDuration,
-		}
 		start := time.Now()
-		res := send(&client, method, url, "", setReqHeader)
+		res := send(client, method, url, "", setReqHeader)
 		end := time.Now()
 		if res == nil {
 			fmt.Printf("HTTP   timeout:     %s %s\n", method, url)
