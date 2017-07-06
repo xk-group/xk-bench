@@ -53,7 +53,7 @@ func consume() {
 		res := send(client, method, url, "", setReqHeader)
 		end := time.Now()
 		if res == nil {
-			fmt.Printf("HTTP   timeout:     %s %s\n", method, url)
+			fmt.Printf("HTTP   fail:     %s %s\n", method, url)
 			continue
 		} else {
 			res.Body.Close()
