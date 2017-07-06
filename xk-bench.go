@@ -28,11 +28,8 @@ func send(client *http.Client, method, url, data string, setHeader func(req *htt
 	setHeader(req)
 	res, err := client.Do(req)
 	if err != nil {
-		if strings.Contains(err.Error(), "Client.Timeout") {
-			return nil
-		} else {
-			panic(fmt.Sprint("client do error:", err))
-		}
+		fmt.Println("client do error:", err)
+		return nil
 	}
 	return res
 }
