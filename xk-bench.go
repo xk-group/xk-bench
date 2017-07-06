@@ -132,7 +132,7 @@ func main() {
 		avg += d
 		successReq++
 	}
-	avg /= float64(len(latency))
+	avg /= float64(successReq)
 
 	totalReq := total
 	fmt.Printf("Trasnaction:                %d hits\n", totalReq)
