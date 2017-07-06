@@ -52,10 +52,11 @@ func consume() {
 		start := time.Now()
 		res := send(&client, method, url, "", setReqHeader)
 		end := time.Now()
-		go res.Body.Close()
 		if res == nil {
 			fmt.Printf("HTTP   timeout:     %s %s\n", method, url)
 			continue
+		} else {
+			go res.Body.Close()
 		}
 		delta := end.Sub(start).Seconds()
 		if res.StatusCode >= 200 && res.StatusCode < 300 {
