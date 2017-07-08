@@ -152,6 +152,7 @@ func main() {
 	eend := time.Now()
 
 	close(latency)
+	close(latency2)
 	successReq := 0
 	max := 0.0
 	min := 1000000.0
