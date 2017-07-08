@@ -60,7 +60,12 @@ func consume() {
 		start := time.Now()
 		res := send(client, method, url, "", setReqHeader)
 		end := time.Now()
-        latency2 <- link_state{start.UnixNano(), end.UnixNano(), res.StatusCode, url}
+        if res == nil {
+            latency2 <- link_state{start.UnixNano(), end.UnixNano(), 404, url}
+        }
+        if res != nil {
+            latency2 <- link_state{start.UnixNano(), end.UnixNano(), res.StatusCode, url}
+        }
 		if res == nil {
 			fmt.Printf("HTTP   fail:     %s %s\n", method, url)
 			continue
