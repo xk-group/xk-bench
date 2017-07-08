@@ -1,16 +1,16 @@
 package main
 
 import (
-	_"net"
 	"bufio"
-	"fmt"
-	"os"
-	"time"
 	"flag"
+	"fmt"
+	_ "net"
+	"os"
 	"strings"
+	"time"
 
-	"net/http"
 	"math/rand"
+	"net/http"
 )
 
 func setReqHeader(req *http.Request) {
@@ -35,10 +35,10 @@ func send(client *http.Client, method, url, data string, setHeader func(req *htt
 }
 
 type link_state struct {
-    start int64
-    end int64
-    state int
-    url string
+	start int64
+	end   int64
+	state int
+	url   string
 }
 
 var method string
@@ -50,9 +50,9 @@ var die = make(chan bool)
 
 func consume() {
 	timeoutDuration := time.Duration(time.Duration(timeout) * time.Second)
-	client := &http.Client {
+	client := &http.Client{
 		Timeout: timeoutDuration,
-		Transport: &http.Transport {
+		Transport: &http.Transport{
 			DisableKeepAlives: true,
 		},
 	}
@@ -60,12 +60,12 @@ func consume() {
 		start := time.Now()
 		res := send(client, method, url, "", setReqHeader)
 		end := time.Now()
-        if res == nil {
-            latency2 <- link_state{start.UnixNano(), end.UnixNano(), 404, url}
-        }
-        if res != nil {
-            latency2 <- link_state{start.UnixNano(), end.UnixNano(), res.StatusCode, url}
-        }
+		if res == nil {
+			latency2 <- link_state{start.UnixNano(), end.UnixNano(), 404, url}
+		}
+		if res != nil {
+			latency2 <- link_state{start.UnixNano(), end.UnixNano(), res.StatusCode, url}
+		}
 		if res == nil {
 			fmt.Printf("HTTP   fail:     %s %s\n", method, url)
 			continue
@@ -175,29 +175,29 @@ func main() {
 			latencyFile.Write([]byte(fmt.Sprintf("%.2f\n", d)))
 		}
 	}
-    if saveLatency {
-        for d := range latency2 {
-            start := d.start
-            end := d.end
-            state := d.state
-            url := d.url
+	if saveLatency {
+		for d := range latency2 {
+			start := d.start
+			end := d.end
+			state := d.state
+			url := d.url
 			latencyFile2.Write([]byte(fmt.Sprintf("%d %d %d\n", start, end, state)))
 			latencyFile2.Write([]byte(fmt.Sprintf("%s\n", url)))
 		}
-    }
+	}
 
-    avg /= float64(successReq)
+	avg /= float64(successReq)
 
-    totalReq := total
-    fmt.Printf("Trasnaction:                %d hits\n", totalReq)
-    fmt.Printf("Availability:               %.2f %%\n", 100 * float64(successReq) / float64(totalReq))
-    fmt.Printf("Elapsed time:               %.2f secs\n", eend.Sub(sstart).Seconds())
-    //fmt.Println("Data transferred:            ")
-    fmt.Printf("Transcation rate:           %.2f trans/sec\n", float64(totalReq) / eend.Sub(sstart).Seconds())
-    fmt.Printf("Successful trasnaction:     %d\n", successReq)
-    fmt.Printf("Failed trasnaction:         %d\n", totalReq - successReq)
-    fmt.Printf("Longest transaction:        %.2f\n", max)
-    fmt.Printf("Shortest transaction:       %.2f\n", min)
-    fmt.Printf("Average transaction:        %.2f\n", avg)
-    fmt.Printf("Throughput:                 %.2f\n", 1.0 / avg * float64(conNum))
+	totalReq := total
+	fmt.Printf("Trasnaction:                %d hits\n", totalReq)
+	fmt.Printf("Availability:               %.2f %%\n", 100*float64(successReq)/float64(totalReq))
+	fmt.Printf("Elapsed time:               %.2f secs\n", eend.Sub(sstart).Seconds())
+	//fmt.Println("Data transferred:            ")
+	fmt.Printf("Transcation rate:           %.2f trans/sec\n", float64(totalReq)/eend.Sub(sstart).Seconds())
+	fmt.Printf("Successful trasnaction:     %d\n", successReq)
+	fmt.Printf("Failed trasnaction:         %d\n", totalReq-successReq)
+	fmt.Printf("Longest transaction:        %.2f\n", max)
+	fmt.Printf("Shortest transaction:       %.2f\n", min)
+	fmt.Printf("Average transaction:        %.2f\n", avg)
+	fmt.Printf("Throughput:                 %.2f\n", 1.0/avg*float64(conNum))
 }
