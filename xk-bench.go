@@ -38,6 +38,7 @@ type link_state struct {
     start int64
     end int64
     state int
+    url string
 }
 
 var method string
@@ -59,7 +60,7 @@ func consume() {
 		start := time.Now()
 		res := send(client, method, url, "", setReqHeader)
 		end := time.Now()
-        latency2 <- link_state{start.UnixNano(), end.UnixNano(), res.StatusCode}
+        latency2 <- link_state{start.UnixNano(), end.UnixNano(), res.StatusCode, url}
 		if res == nil {
 			fmt.Printf("HTTP   fail:     %s %s\n", method, url)
 			continue
@@ -173,7 +174,9 @@ func main() {
             start := d.start
             end := d.end
             state := d.state
+            url := d.url
 			latencyFile2.Write([]byte(fmt.Sprintf("%d %d %d\n", start, end, state)))
+			latencyFile2.Write([]byte(fmt.Sprintf("%s\n", url)))
 		}
     }
 
