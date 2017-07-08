@@ -83,7 +83,20 @@ func main() {
 
 	flag.IntVar(&timeout, "t", 1, "timeout")
 
+	var saveLatency bool
+	flag.BoolVar(&saveLatency, "save", false, "save latency statistics")
+
 	flag.Parse()
+
+	var latencyFile *os.File
+	if saveLatency {
+		var err error
+		latencyFile, err = os.Create("/tmp/latency.txt")
+		if err != nil {
+			fmt.Println("latency.txt file create failed:", err)
+			os.Exit(1)
+		}
+	}
 
 	var reader *os.File
 	if ifile == "-" {
@@ -136,6 +149,9 @@ func main() {
 		}
 		avg += d
 		successReq++
+		if saveLatency {
+			latencyFile.Write([]byte(fmt.Sprintf("%.2f\n", d)))
+		}
 	}
 	avg /= float64(successReq)
 
