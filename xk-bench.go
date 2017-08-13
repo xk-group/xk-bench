@@ -196,6 +196,7 @@ func main() {
 	avg /= float64(successReq)
 
 	totalReq := total
+	fmt.Println(os.Args)
 	fmt.Printf("Trasnaction:                %d hits\n", totalReq)
 	fmt.Printf("Availability:               %.2f %%\n", 100*float64(successReq)/float64(totalReq))
 	fmt.Printf("Elapsed time:               %.2f secs\n", eend.Sub(sstart).Seconds())
