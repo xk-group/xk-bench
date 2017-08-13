@@ -199,5 +199,5 @@ func main() {
 	fmt.Printf("Longest transaction:        %.2f\n", max)
 	fmt.Printf("Shortest transaction:       %.2f\n", min)
 	fmt.Printf("Average transaction:        %.2f\n", avg)
-	fmt.Printf("Throughput:                 %.2f\n", 1.0/avg*float64(conNum))
+	fmt.Printf("Estimate Throughput:        %.2f\n", 1.0/avg*float64(conNum))
 }
