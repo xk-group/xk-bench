@@ -186,14 +186,14 @@ func main() {
 		}
 	}
 
+	avg /= float64(successReq)
+
 	// calc Variance
 	variance := 0.0
 	for d := range latency {
 		variance += (avg - d) * (avg - d)
 	}
 	variance /= float64(successReq);
-
-	avg /= float64(successReq)
 
 	totalReq := total
 	fmt.Println(os.Args)
