@@ -175,8 +175,49 @@ func main() {
 			latencyFile.Write([]byte(fmt.Sprintf("%.2f\n", d)))
 		}
 	}
+    // Drag data from latency2
+    latency2_ := make([]link_state, 0)
+    for d:= range latency2 {
+        latency2_ = append(latency2_, d)
+    }
+    cnt_interval := 0.1 // 0.1s
+    interval := int64(cnt_interval * 1000000000)
+    start_time := time.Now().UnixNano()
+    end_time := int64(0)
+    for _, d:= range latency2_ {
+        start := d.start
+        end := d.end
+        if (start_time > start) {
+            start_time = start
+        }
+        if (end_time < end) {
+            end_time = end
+        }
+    }
+    end_interval := int((end_time - start_time) / interval)
+    throughput := make([]int, end_interval + 1)
+    for _, d:= range latency2_ {
+        state := d.state
+        end := d.end
+        if (state >= 200 && state < 300) {
+            throughput[(end - start_time) / interval] += 1
+            fmt.Printf("interval: %d, cnt: %d\n", (end - start_time) / interval, throughput[(end - start_time) / interval])
+        }
+    }
+    max_throughput := float64(0)
+    avg_throughput := float64(0)
+    interval_cnt := 0
+	for i := 0; i < end_interval; i++ {
+        if ((float64(throughput[i]) / cnt_interval) > max_throughput) {
+            max_throughput = float64(throughput[i]) / cnt_interval
+        }
+        if (i >= (end_interval / 10) && i < (end_interval / 10 * 9)) {
+            avg_throughput += float64(throughput[i]) / cnt_interval
+            interval_cnt += 1
+        }
+    }
 	if saveLatency {
-		for d := range latency2 {
+		for _, d := range latency2_ {
 			start := d.start
 			end := d.end
 			state := d.state
@@ -209,4 +250,6 @@ func main() {
 	fmt.Printf("Average transaction:        %.2f\n", avg)
 	fmt.Printf("Transaction Variance:       %.2f\n", variance)
 	fmt.Printf("Estimate Throughput:        %.2f\n", 1.0/avg*float64(conNum))
+	fmt.Printf("Max Throughput:        %.2f\n", float64(max_throughput))
+	fmt.Printf("Avg Throughput:        %.2f\n", float64(avg_throughput) / float64(interval_cnt))
 }
