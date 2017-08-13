@@ -186,6 +186,13 @@ func main() {
 		}
 	}
 
+	// calc Variance
+	variance := 0.0
+	for d := range latency {
+		variance += (avg - d) * (avg - d)
+	}
+	variance /= float64(successReq);
+
 	avg /= float64(successReq)
 
 	totalReq := total
@@ -199,5 +206,6 @@ func main() {
 	fmt.Printf("Longest transaction:        %.2f\n", max)
 	fmt.Printf("Shortest transaction:       %.2f\n", min)
 	fmt.Printf("Average transaction:        %.2f\n", avg)
+	fmt.Printf("Transaction Variance:       %.2f\n", variance)
 	fmt.Printf("Estimate Throughput:        %.2f\n", 1.0/avg*float64(conNum))
 }
