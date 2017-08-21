@@ -97,21 +97,31 @@ func main() {
 
 	flag.IntVar(&timeout, "t", 1, "timeout")
 
-	var saveLatency bool
-	flag.BoolVar(&saveLatency, "save", false, "save latency statistics")
+    var savfile, savefile1, savefile2 string
+    flag.StringVar(&savfile, "s", "", "set save file path")
+
+	var notSaveLatency bool
+	flag.BoolVar(&notSaveLatency, "nosave", false, "do not save latency statistics")
 
 	flag.Parse()
 
+    if (savfile != "") {
+        savefile1 = "/tmp/latency-" + savfile + ".txt"
+        savefile2 = "/tmp/latency2-" + savfile + ".txt"
+    } else {
+        savefile1 = "/tmp/latency.txt"
+        savefile2 = "/tmp/latency2.txt"
+    }
 	var latencyFile *os.File
 	var latencyFile2 *os.File
-	if saveLatency {
+	if (!notSaveLatency) {
 		var err error
-		latencyFile, err = os.Create("/tmp/latency.txt")
+		latencyFile, err = os.Create(savefile1)
 		if err != nil {
 			fmt.Println("latency.txt file create failed:", err)
 			os.Exit(1)
 		}
-		latencyFile2, err = os.Create("/tmp/latency2.txt")
+		latencyFile2, err = os.Create(savefile2)
 		if err != nil {
 			fmt.Println("latency2.txt file create failed:", err)
 			os.Exit(1)
@@ -171,7 +181,7 @@ func main() {
 		}
 		avg += d
 		successReq++
-		if saveLatency {
+		if (!notSaveLatency) {
 			latencyFile.Write([]byte(fmt.Sprintf("%.2f\n", d)))
 		}
 	}
@@ -216,7 +226,7 @@ func main() {
             interval_cnt += 1
         }
     }
-	if saveLatency {
+	if (!notSaveLatency) {
 		for _, d := range latency2_ {
 			start := d.start
 			end := d.end
