@@ -1,11 +1,24 @@
 # xk-bench
 
-## Build
+## Install Go
+
+env setup:
+```
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH=$HOME/go
+```
+
+## Download & Build
 
 ```
+go get github.com/xk-group/xk-bench
 go install github.com/xk-group/xk-bench
 ```
-If built successfully, the binary should loacted at `$GOPATH/bin`
+If built successfully, the binary should loacted at `$GOPATH/bin`,
+
+```
+export PATH=$PATH:$GOPATH/bin
+```
 
 ## Usage
 
